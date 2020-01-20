@@ -1,6 +1,7 @@
 rqalpha-mod-quantaxis
 
 20200119 修改这个rqalpha-mod-tushare,使用QA获取分笔数据合成为分钟线
+借鉴了https://github.com/CallingWisdom/rqalpha-mod-minute的代码，在此表示感谢这个项目作者．
 
 Make QUANTAXIS compatible with RQAlpha
 
