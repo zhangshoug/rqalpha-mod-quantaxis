@@ -76,22 +76,39 @@ class QUANTAXISKDataSource(BaseDataSource):
         trading_dates=self.trading_dates_mixin.get_trading_dates(start_dt,end_dt)
 
         _is_None=True
+        
+        res=pd.DataFrame()
+        res_min=pd.DataFrame()
 
         if instrument.type == 'CS':
             data=QA.QAFetch.QATdx.QA_fetch_get_stock_day(code,end_dt.strftime('%Y-%m-%d'),end_dt.strftime('%Y-%m-%d'))
             if data.size>0 :
                 _is_None=False
-                tick=QA.QAFetch.QATdx.QA_fetch_get_stock_transaction(code,start_dt.strftime('%Y-%m-%d'),end_dt.strftime('%Y-%m-%d'))
+                data_min=QA.QA_fetch_stock_min_adv(code,start_dt.strftime('%Y-%m-%d'),end_dt.strftime('%Y-%m-%d'),frequence='1min')
+                if data_min==None :
+                    #print("没有数据,跳过,请从网上在线获取")
+                    tick=QA.QAFetch.QATdx.QA_fetch_get_stock_transaction(code,start_dt.strftime('%Y-%m-%d'),end_dt.strftime('%Y-%m-%d'))
+                    res=QA.QAData.data_resample.QA_data_tick_resample(tick, type_='1min')
+                    res_min=res.rename(columns={"vol": "volume"})
+                else :
+                    res_min=data_min.data
         elif instrument.type == 'INDX':
             data=QA.QAFetch.QATdx.QA_fetch_get_index_day(code,end_dt.strftime('%Y-%m-%d'),end_dt.strftime('%Y-%m-%d'))
             if data.size>0 :
                 _is_None=False
-                tick=QA.QAFetch.QATdx.QA_fetch_get_index_transaction(code,start_dt.strftime('%Y-%m-%d'),end_dt.strftime('%Y-%m-%d'))
+                try :
+                    data_min=QA.QA_fetch_index_min_adv(code,start_dt.strftime('%Y-%m-%d'),end_dt.strftime('%Y-%m-%d'),frequence='1min')
+                    res_min=data_min.data
+                except :
+                    #print("没有数据,跳过,请从网上在线获取")
+                    tick=QA.QAFetch.QATdx.QA_fetch_get_index_transaction(code,start_dt.strftime('%Y-%m-%d'),end_dt.strftime('%Y-%m-%d'))
+                    res=QA.QAData.data_resample.QA_data_tick_resample(tick, type_='1min')
+                    res_min=res.rename(columns={"vol": "volume"})
         else:
             return None
         if _is_None==False :
-            res=QA.QAData.data_resample.QA_data_tick_resample(tick, type_='1min')
-            res_min=res.rename(columns={"vol": "volume"})
+            #res=QA.QAData.data_resample.QA_data_tick_resample(tick, type_='1min')
+            #res_min=res.rename(columns={"vol": "volume"})
             df=res_min.reset_index(level=['datetime','code'])
             df=df.loc[df['datetime']<end_dt]
             df['datetime'] = df['datetime'].apply(lambda x: convert_dt_to_int(x))
@@ -187,4 +204,5 @@ class QUANTAXISKDataSource(BaseDataSource):
     def available_data_range(self, frequency):
         if frequency != '1m':
             return super(QUANTAXISKDataSource, self).available_data_range(frequency)
-        return date(2018, 1, 1), date.today() - relativedelta(days=1)
+        #开始时间改成本地QA保存的最早分钟数据
+        return date(2019, 1, 14), date.today() - relativedelta(days=1)
