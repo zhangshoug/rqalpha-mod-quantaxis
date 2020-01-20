@@ -1,0 +1,11 @@
+README.rst
+rqalpha_mod_quantaxis/VERSION.txt
+rqalpha_mod_quantaxis/__init__.py
+rqalpha_mod_quantaxis/data_source.py
+rqalpha_mod_quantaxis/mod.py
+rqalpha_mod_quantaxis.egg-info/PKG-INFO
+rqalpha_mod_quantaxis.egg-info/SOURCES.txt
+rqalpha_mod_quantaxis.egg-info/dependency_links.txt
+rqalpha_mod_quantaxis.egg-info/not-zip-safe
+rqalpha_mod_quantaxis.egg-info/requires.txt
+rqalpha_mod_quantaxis.egg-info/top_level.txt
