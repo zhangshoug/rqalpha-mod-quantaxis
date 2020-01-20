@@ -1,4 +1,6 @@
 rqalpha-mod-quantaxis
+如果本地QA已保存分钟数据，可使用QA_adv版本，并修改data_source.py中
+def available_data_range(self, frequency):的数据可用时间范围
 
 20200119 修改这个rqalpha-mod-tushare,使用QA获取分笔数据合成为分钟线
 借鉴了https://github.com/CallingWisdom/rqalpha-mod-minute的代码，在此表示感谢这个项目作者．
